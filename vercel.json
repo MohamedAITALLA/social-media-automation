@@ -24,7 +24,7 @@
   "crons": [
     {
       "path": "/api/cron.py",
-      "schedule": "0 * * * *"
+      "schedule": "0 12 * * *"
     }
   ],
   "env": {
@@ -32,7 +32,7 @@
     "SECRET_KEY": "LVK5q4yVJ9RZjXCkO95U3W+LokcN7naB6qAuRkt28Kk=",
     "YOUTUBE_API_KEY": "AIzaSyCLu3V4_S_KP7-Jp4zLoCfOMOpjnuW2Okk",
     "MONGO_URI": "mongodb+srv://mohamedaitallabusiness:Zy4Zr6KbXJBhiDaU@cluster0.mqqbm.mongodb.net/youtube-monitor?retryWrites=true&w=majority&appName=Cluster0",
-    "POLLING_INTERVAL": "3600",
+    "POLLING_INTERVAL": "86400",
     "MAX_RETRIES": "3",
     "RETRY_DELAY": "300",
     "LOG_LEVEL": "INFO",
