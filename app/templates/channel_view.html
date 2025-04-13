@@ -1,0 +1,250 @@
+<!-- app/templates/channel_view.html -->
+{% extends "base.html" %}
+
+{% block title %}{{ channel.channel_name }} - YouTube Channel Monitor{% endblock %}
+
+{% block content %}
+<div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ channel.channel_name }}</h1>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Channel ID: {{ channel.channel_id }}</p>
+    </div>
+    <div class="flex space-x-3">
+        <a href="{{ url_for('channels.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md shadow-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Channels
+        </a>
+        <form method="post" action="{{ url_for('channels.toggle', channel_id=channel.channel_id) }}" class="inline-block">
+            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white {{ 'bg-yellow-600 hover:bg-yellow-700' if channel.active else 'bg-green-600 hover:bg-green-700' }} focus:outline-none focus:ring-2 focus:ring-offset-2 {{ 'focus:ring-yellow-500' if channel.active else 'focus:ring-green-500' }}">
+                <i class="fas {{ 'fa-pause mr-2' if channel.active else 'fa-play mr-2' }}"></i>
+                {{ 'Pause Monitoring' if channel.active else 'Resume Monitoring' }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Channel Info Card -->
+<div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg mb-6">
+    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+        <div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                Channel Information
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                Details and monitoring statistics
+            </p>
+        </div>
+        <div>
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ 'bg-green-100 text-green-800' if channel.active else 'bg-gray-100 text-gray-800' }}">
+                {{ 'Active' if channel.active else 'Inactive' }}
+            </span>
+        </div>
+    </div>
+    <div class="border-t border-gray-200 dark:border-gray-700">
+        <dl>
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Channel Name
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    {{ channel.channel_name }}
+                </dd>
+            </div>
+            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Channel URL
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <a href="https://www.youtube.com/channel/{{ channel.channel_id }}" target="_blank" class="text-blue-600 hover:text-blue-500 dark:text-blue-400">
+                        https://www.youtube.com/channel/{{ channel.channel_id }}
+                        <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+                    </a>
+                </dd>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Added On
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    {{ channel.added_at.strftime('%Y-%m-%d %H:%M') }}
+                </dd>
+            </div>
+            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Last Checked
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    {{ channel.last_checked.strftime('%Y-%m-%d %H:%M') if channel.last_checked else 'Never' }}
+                </dd>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Videos Detected
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    {{ videos|length }}
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>
+
+<!-- Videos List -->
+<div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 border-b border-gray-200 dark:border-gray-700 sm:px-6 flex justify-between">
+        <div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                Videos
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                Videos detected from this channel
+            </p>
+        </div>
+        
+        <!-- Search and filter -->
+        <div class="flex items-center">
+            <div class="relative">
+                <input type="text" id="video-search" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Search videos...">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+            </div>
+            
+            <div class="ml-3">
+                <select id="video-sort" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 p-4" id="video-list">
+        {% if videos %}
+            {% for video in videos %}
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg border dark:border-gray-700 video-card">
+                    <div class="relative">
+                        <img src="{{ video.thumbnail_url }}" alt="{{ video.title }}" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                            {{ video.published_at.strftime('%Y-%m-%d') }}
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-lg font-medium text-gray-900 dark:text-white truncate" title="{{ video.title }}">
+                            {{ video.title }}
+                        </h4>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-2" title="{{ video.description }}">
+                            {{ video.description[:100] }}{% if video.description|length > 100 %}...{% endif %}
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 flex justify-between items-center">
+                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                            Detected: {{ video.detected_at.strftime('%Y-%m-%d %H:%M') }}
+                        </span>
+                        <a href="https://www.youtube.com/watch?v={{ video.video_id }}" target="_blank" class="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
+                            Watch <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-span-3 text-center py-8">
+                <i class="fas fa-video text-gray-400 text-4xl mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400">No videos detected yet</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Videos will appear here once detected from this channel</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if videos and videos|length > 15 %}
+        <div class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6">
+            <div class="flex-1 flex justify-between sm:hidden">
+                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    Previous
+                </a>
+                <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    Next
+                </a>
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">
+                        Showing <span class="font-medium">1</span> to <span class="font-medium">15</span> of <span class="font-medium">{{ videos|length }}</span> results
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <span class="sr-only">Previous</span>
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        <a href="#" aria-current="page" class="z-10 bg-blue-50 dark:bg-blue-900 border-blue-500 dark:border-blue-400 text-blue-600 dark:text-blue-300 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                            1
+                        </a>
+                        <a href="#" class="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                            2
+                        </a>
+                        <a href="#" class="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                            3
+                        </a>
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            ...
+                        </span>
+                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <span class="sr-only">Next</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('video-search');
+        const videoCards = document.querySelectorAll('.video-card');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            videoCards.forEach(card => {
+                const title = card.querySelector('h4').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+        
+        // Sort functionality
+        const sortSelect = document.getElementById('video-sort');
+        const videoList = document.getElementById('video-list');
+        
+        sortSelect.addEventListener('change', function() {
+            const sortValue = this.value;
+            const videos = Array.from(videoCards);
+            
+            videos.sort((a, b) => {
+                const dateA = new Date(a.querySelector('.text-xs.text-gray-500').textContent.replace('Detected: ', ''));
+                const dateB = new Date(b.querySelector('.text-xs.text-gray-500').textContent.replace('Detected: ', ''));
+                
+                return sortValue === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+            
+            // Remove all videos
+            videoCards.forEach(card => card.remove());
+            
+            // Add sorted videos back
+            videos.forEach(video => videoList.appendChild(video));
+        });
+    });
+</script>
+{% endblock %}

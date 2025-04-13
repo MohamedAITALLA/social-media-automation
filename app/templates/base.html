@@ -1,0 +1,377 @@
+<!-- app/templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}YouTube Channel Monitor{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configure Tailwind with more modern colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        secondary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    },
+                    boxShadow: {
+                        card: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+
+    <!-- Custom styles -->
+    <style>
+        .dark {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #f3f4f6;
+            --text-secondary: #d1d5db;
+            --accent: #6366f1;
+            --border: #374151;
+        }
+
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --accent: #4f46e5;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+    </style>
+
+    <!-- Custom date formatting functions -->
+    {% macro format_date(date_obj) %}
+        {% if date_obj %}
+            {{ date_obj.strftime('%b %d, %Y') }}
+        {% else %}
+            Never
+        {% endif %}
+    {% endmacro %}
+
+    {% macro format_datetime(date_obj) %}
+        {% if date_obj %}
+            {{ date_obj.strftime('%b %d, %Y %H:%M') }}
+        {% else %}
+            Never
+        {% endif %}
+    {% endmacro %}
+
+    {% macro format_relative_time(date_obj) %}
+        {% if date_obj %}
+            {% set delta = now - date_obj %}
+            {% if delta.total_seconds() < 60 %}
+                Just now
+            {% elif delta.total_seconds() < 3600 %}
+                {{ (delta.total_seconds() / 60) | int }} minute{{ 's' if (delta.total_seconds() / 60) | int != 1 }} ago
+            {% elif delta.total_seconds() < 86400 %}
+                {{ (delta.total_seconds() / 3600) | int }} hour{{ 's' if (delta.total_seconds() / 3600) | int != 1 }} ago
+            {% elif delta.total_seconds() < 604800 %}
+                {{ (delta.total_seconds() / 86400) | int }} day{{ 's' if (delta.total_seconds() / 86400) | int != 1 }} ago
+            {% else %}
+                {{ date_obj.strftime('%b %d, %Y') }}
+            {% endif %}
+        {% else %}
+            Never
+        {% endif %}
+    {% endmacro %}
+
+    {% block head %}{% endblock %}
+</head>
+
+<body class="light bg-gray-100 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md dark:bg-gray-800 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="text-xl font-bold text-secondary-600 dark:text-secondary-400">
+                            <i class="fab fa-youtube mr-2"></i>
+                            YT Monitor
+                        </span>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="{{ url_for('dashboard.index') }}"
+                            class="{% if request.path == url_for('dashboard.index') %}border-secondary-500 text-gray-900 dark:text-white{% else %}border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 hover:text-secondary-700 dark:hover:text-secondary-300{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                            Dashboard
+                        </a>
+                        <a href="{{ url_for('channels.index') }}"
+                            class="{% if '/channels' in request.path %}border-secondary-500 text-gray-900 dark:text-white{% else %}border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 hover:text-secondary-700 dark:hover:text-secondary-300{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                            Channels
+                        </a>
+                        <a href="{{ url_for('webhooks.index') }}"
+                            class="{% if '/webhooks' in request.path %}border-secondary-500 text-gray-900 dark:text-white{% else %}border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 hover:text-secondary-700 dark:hover:text-secondary-300{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                            Webhooks
+                        </a>
+                        <a href="{{ url_for('settings.index') }}"
+                            class="{% if '/settings' in request.path %}border-secondary-500 text-gray-900 dark:text-white{% else %}border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 hover:text-secondary-700 dark:hover:text-secondary-300{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                            Settings
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <!-- Theme toggle button removed as requested -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="sm:hidden" id="mobile-menu">
+            <div class="pt-2 pb-3 space-y-1">
+                <a href="{{ url_for('dashboard.index') }}"
+                    class="{% if request.path == url_for('dashboard.index') %}bg-secondary-50 dark:bg-gray-700 border-secondary-500 text-secondary-700 dark:text-white{% else %}border-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500 hover:text-secondary-700 dark:hover:text-secondary-400{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-colors duration-200">
+                    Dashboard
+                </a>
+                <a href="{{ url_for('channels.index') }}"
+                    class="{% if '/channels' in request.path %}bg-secondary-50 dark:bg-gray-700 border-secondary-500 text-secondary-700 dark:text-white{% else %}border-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500 hover:text-secondary-700 dark:hover:text-secondary-400{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-colors duration-200">
+                    Channels
+                </a>
+                <a href="{{ url_for('webhooks.index') }}"
+                    class="{% if '/webhooks' in request.path %}bg-secondary-50 dark:bg-gray-700 border-secondary-500 text-secondary-700 dark:text-white{% else %}border-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500 hover:text-secondary-700 dark:hover:text-secondary-400{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-colors duration-200">
+                    Webhooks
+                </a>
+                <a href="{{ url_for('settings.index') }}"
+                    class="{% if '/settings' in request.path %}bg-secondary-50 dark:bg-gray-700 border-secondary-500 text-secondary-700 dark:text-white{% else %}border-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500 hover:text-secondary-700 dark:hover:text-secondary-400{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-colors duration-200">
+                    Settings
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        {% for category, message in messages %}
+        <div
+            class="rounded-lg shadow p-4 mb-4 notification {% if category == 'error' %}border-red-500 bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300{% else %}border-green-500 bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300{% endif %}">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    {% if category == 'error' %}
+                    <i class="fas fa-exclamation-circle text-red-400"></i>
+                    {% else %}
+                    <i class="fas fa-check-circle text-green-400"></i>
+                    {% endif %}
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium">{{ message }}</p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <div class="-mx-1.5 -my-1.5">
+                        <button
+                            class="close-alert inline-flex rounded-md p-1.5 text-gray-500 hover:bg-gray-100 focus:outline-none">
+                            <span class="sr-only">Dismiss</span>
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Main content -->
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 shadow-inner mt-auto">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+                YouTube Channel Monitor with Webhook Integration v1.0.0
+            </p>
+        </div>
+    </footer>
+
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+
+            // Check for saved theme preference or use system preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+            }
+
+            // Toggle theme
+            themeToggle.addEventListener('click', function () {
+                if (body.classList.contains('dark')) {
+                    body.classList.remove('dark');
+                    body.classList.add('light');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    body.classList.remove('light');
+                    body.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+
+            // Close alert messages
+            document.querySelectorAll('.close-alert').forEach(button => {
+                button.addEventListener('click', function () {
+                    this.closest('.notification').remove();
+                });
+            });
+
+            // Mobile menu toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    const expanded = mobileMenu.classList.contains('hidden');
+                    if (expanded) {
+                        mobileMenu.classList.remove('hidden');
+                    } else {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Connect to Socket.IO for real-time updates
+            const socket = io();
+
+            socket.on('connect', function () {
+                console.log('Connected to server');
+            });
+
+            socket.on('new_video', function (data) {
+                // Create notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-4 right-4 bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 max-w-sm w-full notification z-50';
+                notification.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <img class="h-10 w-10 rounded" src="${data.thumbnail_url}" alt="Video thumbnail">
+                    </div>
+                    <div class="ml-3 w-0 flex-1">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">New Video Detected</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">${data.title}</p>
+                        <div class="mt-2">
+                            <a href="https://www.youtube.com/watch?v=${data.video_id}" target="_blank" class="text-sm font-medium text-secondary-600 hover:text-secondary-500 dark:text-secondary-400 transition-colors duration-200">
+                                Watch on YouTube
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ml-4 flex-shrink-0 flex">
+                        <button class="close-notification bg-white dark:bg-gray-800 rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none">
+                            <span class="sr-only">Close</span>
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+                document.body.appendChild(notification);
+
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+
+                // Manual close button
+                notification.querySelector('.close-notification').addEventListener('click', function () {
+                    notification.remove();
+                });
+
+                // Update dashboard if we're on it
+                const recentVideosContainer = document.getElementById('recent-videos');
+                if (recentVideosContainer) {
+                    // Create new video card
+                    const videoCard = document.createElement('div');
+                    videoCard.className = 'bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg card transition-all duration-300';
+                    videoCard.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <img class="h-12 w-12 rounded" src="${data.thumbnail_url}" alt="Video thumbnail">
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-900 dark:text-white truncate card-title">${data.title}</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Just now</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3">
+                        <a href="https://www.youtube.com/watch?v=${data.video_id}" target="_blank" class="text-sm font-medium text-secondary-600 hover:text-secondary-500 dark:text-secondary-400 transition-colors duration-200">
+                            <i class="fab fa-youtube mr-1"></i> Watch on YouTube
+                        </a>
+                    </div>
+                `;
+
+                    // Add to the beginning of the list
+                    recentVideosContainer.insertBefore(videoCard, recentVideosContainer.firstChild);
+
+                    // Remove the last card if there are more than 10
+                    if (recentVideosContainer.children.length > 10) {
+                        recentVideosContainer.removeChild(recentVideosContainer.lastChild);
+                    }
+                }
+            });
+        });
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

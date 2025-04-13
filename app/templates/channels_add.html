@@ -1,0 +1,69 @@
+<!-- app/templates/channels_add.html -->
+{% extends "base.html" %}
+
+{% block title %}Add Channel - YouTube Channel Monitor{% endblock %}
+
+{% block content %}
+<div class="px-4 py-5 sm:px-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Add YouTube Channel</h1>
+    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Add a new YouTube channel to monitor</p>
+</div>
+
+<div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <form method="post" action="{{ url_for('channels.add') }}">
+            <div class="space-y-6">
+                <div>
+                    <label for="channel_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        YouTube Channel ID, URL, or Username
+                    </label>
+                    <div class="mt-1">
+                        <input 
+                            type="text" 
+                            name="channel_id" 
+                            id="channel_id" 
+                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" 
+                            placeholder="https://www.youtube.com/@ChannelName or UCxxx..." 
+                            required
+                        >
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        Enter the YouTube channel URL, ID, or username
+                    </p>
+                </div>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                Supported formats
+                            </h3>
+                            <div class="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li>Channel URL: <code class="bg-gray-200 dark:bg-gray-600 px-1 rounded">https://www.youtube.com/channel/UCxxx...</code></li>
+                                    <li>Custom URL: <code class="bg-gray-200 dark:bg-gray-600 px-1 rounded">https://www.youtube.com/c/ChannelName</code></li>
+                                    <li>New handle format: <code class="bg-gray-200 dark:bg-gray-600 px-1 rounded">https://www.youtube.com/@ChannelName</code></li>
+                                    <li>Channel ID: <code class="bg-gray-200 dark:bg-gray-600 px-1 rounded">UCxxx...</code> (starts with UC)</li>
+                                    <li>Username: <code class="bg-gray-200 dark:bg-gray-600 px-1 rounded">ChannelName</code> (for older channels)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex items-center justify-end">
+                <a href="{{ url_for('channels.index') }}" class="bg-white dark:bg-gray-800 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cancel
+                </a>
+                <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Add Channel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

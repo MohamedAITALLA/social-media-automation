@@ -1,0 +1,31 @@
+# docker-compose.yml
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/youtube_monitor
+      - SECRET_KEY=change-me-in-production
+      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+      - POLLING_INTERVAL=3600
+      - MAX_RETRIES=3
+      - RETRY_DELAY=300
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    volumes:
+      - ./app:/app/app
+
+  mongodb:
+    image: mongo:4.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:

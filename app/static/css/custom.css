@@ -1,0 +1,644 @@
+/* Custom CSS for YouTube Monitor */
+
+/* Enhanced Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: #1f2937; /* Dark gray for light mode */
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #f3f4f6; /* Light gray for dark mode */
+}
+
+/* Title contrast fix - ensuring titles are visible on all backgrounds */
+.text-white {
+  color: #1f2937 !important; /* Dark gray in light mode */
+}
+
+.dark .text-white {
+  color: #f3f4f6 !important; /* Light gray in dark mode */
+}
+
+/* Stronger contrast for card titles */
+.card-title, .text-gray-900 {
+  color: #1f2937 !important; /* Dark gray for better contrast in light mode */
+}
+
+.dark .card-title, .dark .text-gray-900 {
+  color: #f3f4f6 !important; /* Light gray for better contrast in dark mode */
+}
+
+/* Main section header styling */
+h1.text-3xl {
+  color: #4f46e5 !important; /* Indigo for main section headers in light mode */
+  font-weight: 700;
+}
+
+.dark h1.text-3xl {
+  color: #818cf8 !important; /* Lighter indigo for main section headers in dark mode */
+  font-weight: 700;
+}
+
+/* Custom Card Styling */
+.card {
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Modern Table Styling */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4b5563; /* Medium gray for better contrast */
+  background-color: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.dark table th {
+  color: #d1d5db; /* Lighter gray for dark mode */
+  background-color: #374151;
+  border-bottom: 2px solid #4b5563;
+}
+
+table td {
+  vertical-align: middle;
+  padding: 1rem 0.75rem;
+}
+
+/* Zebra striping for tables */
+table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.dark table tbody tr:nth-child(even) {
+  background-color: #1f2937;
+}
+
+/* Enhanced Form Controls */
+input, select, textarea {
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  padding: 0.625rem 0.875rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  outline: none;
+}
+
+.dark input, .dark select, .dark textarea {
+  background-color: #1f2937;
+  border-color: #4b5563;
+  color: #f3f4f6;
+}
+
+.dark input:focus, .dark select:focus, .dark textarea:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+}
+
+/* Button Enhancements */
+.btn {
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background-color: #4f46e5; /* Indigo */
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+}
+
+.dark .btn-primary {
+  background-color: #6366f1;
+}
+
+.dark .btn-primary:hover {
+  background-color: #4f46e5;
+}
+
+/* Enhanced Badge Styles */
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.badge i {
+  margin-right: 0.25rem;
+}
+
+/* Status badges with improved colors */
+.badge-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.badge-error {
+  background-color: #ef4444;
+  color: white;
+}
+
+.badge-info {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.badge-neutral {
+  background-color: #6b7280;
+  color: white;
+}
+
+/* New badge colors with softer palette */
+.badge-green {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-yellow {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.badge-red {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.badge-blue {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.badge-purple {
+  background-color: #ede9fe;
+  color: #5b21b6;
+  border: 1px solid #ddd6fe;
+}
+
+.badge-gray {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+}
+
+/* Dark mode badge styles */
+.dark .badge-green {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.dark .badge-yellow {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.dark .badge-red {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.dark .badge-blue {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.dark .badge-purple {
+  background-color: rgba(124, 58, 237, 0.2);
+  color: #a78bfa;
+  border-color: rgba(124, 58, 237, 0.4);
+}
+
+.dark .badge-gray {
+  background-color: rgba(75, 85, 99, 0.2);
+  color: #e5e7eb;
+  border-color: rgba(75, 85, 99, 0.4);
+}
+
+/* Badge sizes */
+.badge-sm {
+  font-size: 0.625rem;
+  padding: 0.125rem 0.5rem;
+}
+
+.badge-lg {
+  font-size: 0.875rem;
+  padding: 0.375rem 1rem;
+}
+
+/* Navigation Enhancement */
+nav {
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.dark nav {
+  border-bottom: 1px solid rgba(75, 85, 99, 0.5);
+}
+
+/* Accent Colors */
+.text-accent {
+  color: #4f46e5; /* Indigo */
+}
+
+.dark .text-accent {
+  color: #818cf8; /* Lighter indigo for dark mode */
+}
+
+.bg-accent {
+  background-color: #4f46e5;
+}
+
+.dark .bg-accent {
+  background-color: #6366f1;
+}
+
+/* Notifications */
+.notification {
+  border-left: 4px solid #4f46e5;
+  background-color: #eef2ff;
+  color: #1e1e1e;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark .notification {
+  background-color: #1f2937;
+  color: #f3f4f6;
+  border-left: 4px solid #6366f1;
+}
+
+/* Animation for feedback */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Making sure white text isn't used on light backgrounds */
+.light .text-white {
+  color: #1f2937 !important;
+}
+
+/* Improve contrast in cards */
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.dark .card-title {
+  color: #f3f4f6;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Additional Styling Fixes */
+
+/* Fix contrast for light mode text */
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+  color: #1f2937 !important;
+}
+
+.light p {
+  color: #374151 !important;
+}
+
+.light .text-gray-900 {
+  color: #1f2937 !important;
+}
+
+/* Enhanced table hover effects */
+table tbody tr {
+  transition: background-color 0.15s ease-in-out;
+}
+
+table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.dark table tbody tr:hover {
+  background-color: #2d3748;
+}
+
+/* Better modal styling */
+.modal {
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Better link styling */
+a {
+  transition: color 0.2s ease-in-out;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/* Better form styling */
+label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: #4b5563;
+}
+
+.dark label {
+  color: #d1d5db;
+}
+
+/* Consistent spacing */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Better button styles */
+button, .btn {
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+
+/* Form control focus states */
+.focus-ring {
+  transition: all 0.2s ease-in-out;
+  border-color: transparent;
+}
+
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4);
+  border-color: #6366f1;
+}
+
+/* Color consistency - replace blue with indigo for better look */
+.text-blue-400, .text-blue-500, .text-blue-600 {
+  color: #4f46e5 !important;
+}
+
+.dark .text-blue-400, .dark .text-blue-500, .dark .text-blue-600 {
+  color: #818cf8 !important;
+}
+
+.bg-blue-500, .bg-blue-600 {
+  background-color: #4f46e5 !important;
+}
+
+.dark .bg-blue-500, .dark .bg-blue-600 {
+  background-color: #6366f1 !important;
+}
+
+.border-blue-500 {
+  border-color: #4f46e5 !important;
+}
+
+.dark .border-blue-500 {
+  border-color: #6366f1 !important;
+}
+
+/* Dashboard card enhancement */
+.dashboard-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border-radius: 0.75rem;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Better card layouts */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.stat-card-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dark .stat-card-header {
+  border-bottom: 1px solid #4b5563;
+}
+
+.stat-card-body {
+  padding: 1.25rem;
+  flex: 1 1 auto;
+}
+
+.stat-card-footer {
+  padding: 1rem 1.25rem;
+  background-color: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.dark .stat-card-footer {
+  background-color: #1f2937;
+  border-top: 1px solid #4b5563;
+}
+
+/* Improved form controls */
+.form-input, .form-select, .form-textarea {
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  padding: 0.625rem 0.875rem;
+  width: 100%;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+  outline: none;
+}
+
+.dark .form-input, .dark .form-select, .dark .form-textarea {
+  background-color: #1f2937;
+  border-color: #4b5563;
+  color: #f3f4f6;
+}
+
+.dark .form-input:focus, .dark .form-select:focus, .dark .form-textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+/* Enhanced contrast for light mode headings in sections */
+.bg-white h1, .bg-white h2, .bg-white h3, .bg-white h4, .bg-white h5, .bg-white h6,
+.bg-gray-50 h1, .bg-gray-50 h2, .bg-gray-50 h3, .bg-gray-50 h4, .bg-gray-50 h5, .bg-gray-50 h6 {
+  color: #111827 !important; /* Very dark gray for better contrast */
+}
+
+/* Enhanced contrast for dark mode headings in darker sections */
+.dark .bg-gray-800 h1, .dark .bg-gray-800 h2, .dark .bg-gray-800 h3, 
+.dark .bg-gray-800 h4, .dark .bg-gray-800 h5, .dark .bg-gray-800 h6,
+.dark .bg-gray-700 h1, .dark .bg-gray-700 h2, .dark .bg-gray-700 h3, 
+.dark .bg-gray-700 h4, .dark .bg-gray-700 h5, .dark .bg-gray-700 h6 {
+  color: #f9fafb !important; /* Near-white for better contrast */
+}
+
+/* Fix for text in specific cards */
+.text-sm.font-medium.text-gray-900 {
+  color: #111827 !important;
+}
+
+.dark .text-sm.font-medium.text-gray-900 {
+  color: #f9fafb !important;
+}
+
+/* Better contrast for section headings */
+.text-lg.leading-6.font-medium.text-gray-900 {
+  color: #111827 !important;
+  font-weight: 700;
+}
+
+.dark .text-lg.leading-6.font-medium.text-gray-900 {
+  color: #f9fafb !important;
+  font-weight: 700;
+}
+
+/* Card title specific contrast fix */
+.bg-white .card-title, .bg-gray-50 .card-title {
+  color: #111827 !important;
+}
+
+.dark .bg-gray-800 .card-title, .dark .bg-gray-700 .card-title {
+  color: #f9fafb !important;
+}
+
+/* Ensure text contrast in videos */
+#recent-videos .text-lg.font-medium {
+  color: #111827 !important;
+}
+
+.dark #recent-videos .text-lg.font-medium {
+  color: #f9fafb !important;
+}
+
+/* Fix dashboard titles */
+.dashboard-card h3, .dashboard-card h4 {
+  color: #111827 !important;
+}
+
+.dark .dashboard-card h3, .dark .dashboard-card h4 {
+  color: #f9fafb !important;
+}
+
+/* Specific page header title color overrides */
+.text-3xl.font-bold.text-gray-900.dark\:text-white {
+  color: #4f46e5 !important; /* Indigo for main header titles in light mode */
+}
+
+.dark .text-3xl.font-bold.text-gray-900.dark\:text-white {
+  color: #818cf8 !important; /* Lighter indigo for main header titles in dark mode */
+}
+
+/* Main heading section titles for better visibility */
+h1:not(.card-title) {
+  color: #4f46e5 !important; /* Indigo */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.dark h1:not(.card-title) {
+  color: #818cf8 !important; /* Lighter indigo */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Subsection headers */
+h3.text-lg.leading-6.font-medium {
+  color: #4f46e5 !important; /* Indigo */
+  font-weight: 600;
+}
+
+.dark h3.text-lg.leading-6.font-medium {
+  color: #818cf8 !important; /* Lighter indigo */
+  font-weight: 600;
+} 

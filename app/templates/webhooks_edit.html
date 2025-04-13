@@ -1,0 +1,178 @@
+<!-- app/templates/webhooks_edit.html -->
+{% extends "base.html" %}
+
+{% block title %}Edit Webhook - YouTube Channel Monitor{% endblock %}
+
+{% block content %}
+<div class="px-4 py-5 sm:px-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Webhook</h1>
+    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Modify webhook configuration</p>
+</div>
+
+<div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <form method="post" action="{{ url_for('webhooks.edit', webhook_id=webhook._id) }}">
+            <div class="space-y-6">
+                <div>
+                    <label for="url" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Webhook URL
+                    </label>
+                    <div class="mt-1">
+                        <input type="url" name="url" id="url" value="{{ webhook.url }}"
+                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                            placeholder="https://example.com/webhook" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Description (Optional)
+                    </label>
+                    <div class="mt-1">
+                        <input type="text" name="description" id="description" value="{{ webhook.description or '' }}"
+                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                            placeholder="e.g., Discord notification channel">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center">
+                        <input type="checkbox" name="active" id="active" {% if webhook.active %}checked{% endif %}
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded">
+                        <label for="active" class="ml-2 block text-sm text-gray-900 dark:text-white">
+                            Active
+                        </label>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        When inactive, this webhook will not receive notifications
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Custom Headers
+                    </label>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        Add custom HTTP headers to include with webhook requests
+                    </p>
+
+                    <div id="headers-container" class="mt-3 space-y-3">
+                        {% if webhook.headers %}
+                        {% for key, value in webhook.headers.items() %}
+                        <div class="flex items-center space-x-2">
+                            <div class="w-1/3">
+                                <input type="text" name="header_key[]" value="{{ key }}"
+                                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                                    placeholder="Header name">
+                            </div>
+                            <div class="w-2/3 flex items-center space-x-2">
+                                <input type="text" name="header_value[]" value="{{ value }}"
+                                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                                    placeholder="Header value">
+                                <button type="button"
+                                    class="remove-header text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="flex items-center space-x-2">
+                            <div class="w-1/3">
+                                <input type="text" name="header_key[]"
+                                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                                    placeholder="Header name">
+                            </div>
+                            <div class="w-2/3">
+                                <input type="text" name="header_value[]"
+                                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                                    placeholder="Header value">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="button" id="add-header"
+                            class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-plus mr-1"></i> Add Header
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between">
+                <div>
+                    <a href="{{ url_for('webhooks.view', webhook_id=webhook._id) }}"
+                        class="bg-white dark:bg-gray-800 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Save Changes
+                    </button>
+                </div>
+                <form method="post" action="{{ url_for('webhooks.delete', webhook_id=webhook._id) }}"
+                    onsubmit="return confirm('Are you sure you want to delete this webhook?');">
+                    <button type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <i class="fas fa-trash mr-2"></i> Delete Webhook
+                    </button>
+                </form>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const headersContainer = document.getElementById('headers-container');
+        const addHeaderButton = document.getElementById('add-header');
+
+        // Add event listeners to existing remove buttons
+        document.querySelectorAll('.remove-header').forEach(button => {
+            button.addEventListener('click', function () {
+                this.closest('.flex.items-center.space-x-2').remove();
+            });
+        });
+
+        addHeaderButton.addEventListener('click', function () {
+            const headerRow = document.createElement('div');
+            headerRow.className = 'flex items-center space-x-2 mt-3';
+            headerRow.innerHTML = `
+                <div class="w-1/3">
+                    <input 
+                        type="text" 
+                        name="header_key[]" 
+                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" 
+                        placeholder="Header name"
+                    >
+                </div>
+                <div class="w-2/3 flex items-center space-x-2">
+                    <input 
+                        type="text" 
+                        name="header_value[]" 
+                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" 
+                        placeholder="Header value"
+                    >
+                    <button 
+                        type="button" 
+                        class="remove-header text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            headersContainer.appendChild(headerRow);
+
+            // Add event listener to the remove button
+            headerRow.querySelector('.remove-header').addEventListener('click', function () {
+                headerRow.remove();
+            });
+        });
+    });
+</script>
+{% endblock %}

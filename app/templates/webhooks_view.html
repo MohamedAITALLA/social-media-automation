@@ -1,0 +1,227 @@
+<!-- app/templates/webhooks_view.html -->
+{% extends "base.html" %}
+
+{% block title %}Webhook Details - YouTube Channel Monitor{% endblock %}
+
+{% block content %}
+<div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Webhook Details</h1>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ webhook.description or 'No description' }}</p>
+    </div>
+    <div class="flex space-x-3">
+        <a href="{{ url_for('webhooks.index') }}"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md shadow-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Webhooks
+        </a>
+        <a href="{{ url_for('webhooks.edit', webhook_id=webhook._id) }}"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <i class="fas fa-edit mr-2"></i> Edit Webhook
+        </a>
+    </div>
+</div>
+
+<!-- Webhook Info Card -->
+<div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg mb-6">
+    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+        <div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                Webhook Information
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                Configuration details and delivery statistics
+            </p>
+        </div>
+        <div>
+            <span
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ 'bg-green-100 text-green-800' if webhook.active else 'bg-gray-100 text-gray-800' }}">
+                {{ 'Active' if webhook.active else 'Inactive' }}
+            </span>
+        </div>
+    </div>
+    <div class="border-t border-gray-200 dark:border-gray-700">
+        <dl>
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Endpoint URL
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2 break-all">
+                    {{ webhook.url }}
+                </dd>
+            </div>
+            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Description
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    {{ webhook.description or 'No description provided' }}
+                </dd>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Created On
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    {{ webhook.created_at.strftime('%Y-%m-%d %H:%M') if webhook.created_at else 'Unknown' }}
+                </dd>
+            </div>
+            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Last Delivery
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    {{ webhook.last_delivery.strftime('%Y-%m-%d %H:%M') if webhook.last_delivery else 'Never' }}
+                </dd>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    Custom Headers
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    {% if webhook.headers %}
+                    <div
+                        class="bg-white dark:bg-gray-800 shadow overflow-hidden border border-gray-200 dark:border-gray-700 sm:rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Header Name
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Value
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                {% for key, value in webhook.headers.items() %}
+                                <tr>
+                                    <td
+                                        class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ key }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        {{ value }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <span class="text-gray-500 dark:text-gray-400">No custom headers configured</span>
+                    {% endif %}
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>
+
+<!-- Test Webhook Section -->
+<div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg mb-6">
+    <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+            Test Webhook
+        </h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+            Send a test notification to verify your webhook configuration
+        </p>
+    </div>
+    <div class="px-4 py-5 sm:p-6">
+        <form method="post" action="{{ url_for('webhooks.test', webhook_id=webhook._id) }}" class="space-y-6">
+            <div>
+                <label for="test_message" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Custom Message (Optional)
+                </label>
+                <div class="mt-1">
+                    <input type="text" name="test_message" id="test_message"
+                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                        placeholder="Add a custom message to the test payload">
+                </div>
+            </div>
+
+            <div>
+                <button type="submit"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <i class="fas fa-paper-plane mr-2"></i> Send Test Notification
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delivery History -->
+<div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+            Delivery History
+        </h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+            Recent webhook delivery attempts
+        </p>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Time
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Video
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Status
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Response
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {% if delivery_history %}
+                {% for delivery in delivery_history %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {{ delivery.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-8 w-8">
+                                <img class="h-8 w-8 rounded" src="{{ delivery.video_thumbnail }}" alt="">
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white truncate max-w-xs">
+                                    {{ delivery.video_title }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ 'bg-green-100 text-green-800' if delivery.success else 'bg-red-100 text-red-800' }}">
+                            {{ 'Success' if delivery.success else 'Failed' }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {{ delivery.response_code }} {{ delivery.response_message }}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                        No delivery history available
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

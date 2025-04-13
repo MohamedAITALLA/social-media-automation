@@ -1,0 +1,241 @@
+<!-- app/templates/settings.html -->
+{% extends "base.html" %}
+
+{% block title %}Settings - YouTube Channel Monitor{% endblock %}
+
+{% block content %}
+<div class="px-4 py-5 sm:px-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">System Settings</h1>
+    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Configure monitoring and notification settings</p>
+</div>
+
+<!-- Start a single form for all settings -->
+<form method="post" action="{{ url_for('settings.update') }}">
+    <div class="space-y-8">
+        <!-- Monitoring Settings -->
+        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 border-b border-gray-200 dark:border-gray-700 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    Monitoring Settings
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                    Configure how often channels are checked for new videos
+                </p>
+            </div>
+
+            <div class="px-4 py-5 sm:p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label for="polling_interval"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Polling Interval (seconds)
+                        </label>
+                        <div class="mt-1">
+                            <input type="number" name="polling_interval" id="polling_interval" min="60"
+                                value="{{ settings.polling_interval }}"
+                                class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md">
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            How often to check for new videos (minimum 60 seconds)
+                        </p>
+                    </div>
+
+                    <div>
+                        <label for="youtube_api_key" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            YouTube API Key
+                        </label>
+                        <div class="mt-1">
+                            <input type="text" name="youtube_api_key" id="youtube_api_key"
+                                placeholder="{{ settings.youtube_api_key or 'Enter your YouTube API key' }}"
+                                class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md">
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            Your YouTube Data API key (leave blank to keep current)
+                        </p>
+                        
+                        <!-- Add YouTube API Test Button -->
+                        <div class="mt-4">
+                            <a href="{{ url_for('settings.test_youtube_api') }}"
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                <i class="fas fa-vial mr-2"></i> Test YouTube API
+                            </a>
+                            {% if api_status %}
+                            <div class="mt-2 p-2 rounded-md {{ 'bg-green-100' if api_status == 'success' else 'bg-red-100' }}">
+                                <p class="{{ 'text-green-700' if api_status == 'success' else 'text-red-700' }}">
+                                    <i class="{{ 'fas fa-check-circle' if api_status == 'success' else 'fas fa-exclamation-circle' }} mr-1"></i>
+                                    {{ api_message }}
+                                </p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 border-b border-gray-200 dark:border-gray-700 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    Notification Settings
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                    Configure webhook notification behavior
+                </p>
+            </div>
+
+            <div class="px-4 py-5 sm:p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label for="max_retries" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Maximum Retry Attempts
+                        </label>
+                        <div class="mt-1">
+                            <input type="number" name="max_retries" id="max_retries" min="0" max="10"
+                                value="{{ settings.max_retries }}"
+                                class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md">
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            How many times to retry failed webhook deliveries (0-10)
+                        </p>
+                    </div>
+
+                    <div>
+                        <label for="retry_delay" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Retry Delay (seconds)
+                        </label>
+                        <div class="mt-1">
+                            <input type="number" name="retry_delay" id="retry_delay" min="10"
+                                value="{{ settings.retry_delay }}"
+                                class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md">
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            Time to wait between retry attempts (minimum 10 seconds)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Settings -->
+        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 border-b border-gray-200 dark:border-gray-700 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                    Advanced Settings
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                    Additional configuration options
+                </p>
+            </div>
+
+            <div class="px-4 py-5 sm:p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label for="log_level" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Log Level
+                        </label>
+                        <div class="mt-1">
+                            <select name="log_level" id="log_level"
+                                class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md">
+                                <option value="DEBUG" {% if settings.log_level == 'DEBUG' %}selected{% endif %}>DEBUG</option>
+                                <option value="INFO" {% if settings.log_level == 'INFO' %}selected{% endif %}>INFO</option>
+                                <option value="WARNING" {% if settings.log_level == 'WARNING' %}selected{% endif %}>WARNING</option>
+                                <option value="ERROR" {% if settings.log_level == 'ERROR' %}selected{% endif %}>ERROR</option>
+                                <option value="CRITICAL" {% if settings.log_level == 'CRITICAL' %}selected{% endif %}>CRITICAL</option>
+                            </select>
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            Application logging level
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button (Single button for all settings) -->
+        <div class="flex justify-center py-6">
+            <button type="submit"
+                class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <i class="fas fa-save mr-2"></i> Save All Settings
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- System Maintenance (Outside of the settings form) -->
+<div class="space-y-8 mt-8">
+    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 border-b border-gray-200 dark:border-gray-700 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                System Maintenance
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                Manage system operations
+            </p>
+        </div>
+
+        <div class="px-4 py-5 sm:p-6">
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-sm font-medium text-gray-900 dark:text-white">Restart Monitoring Service</h4>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        Restart the background monitoring service to apply changes
+                    </p>
+                    <div class="mt-3">
+                        <form method="post" action="{{ url_for('settings.restart_monitor') }}">
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                <i class="fas fa-sync-alt mr-2"></i> Restart Service
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-5">
+                    <h4 class="text-sm font-medium text-gray-900 dark:text-white">Check Channels Now</h4>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        Force an immediate check for new videos on all active channels
+                    </p>
+                    <div class="mt-3">
+                        <form method="post" action="{{ url_for('settings.check_now') }}">
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <i class="fas fa-search mr-2"></i> Check Now
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="pt-5 border-t border-gray-200 dark:border-gray-700">
+                    <h4 class="text-sm font-medium text-gray-900 dark:text-white">System Information</h4>
+                    <div class="mt-3 bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
+                        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Version</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white">1.0.0</dd>
+                            </div>
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Environment</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ settings.environment|default('Development') }}</dd>
+                            </div>
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Database</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white">MongoDB</dd>
+                            </div>
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</dt>
+                                <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                                    <span class="inline-flex items-center">
+                                        <span class="h-2 w-2 rounded-full bg-green-400 mr-1.5"></span>
+                                        Running
+                                    </span>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
